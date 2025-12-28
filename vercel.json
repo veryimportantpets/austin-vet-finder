@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/crawl?type=clinic&limit=20",
+      "schedule": "0 2 * * 0"
+    },
+    {
+      "path": "/api/cron/crawl?type=provider-directories",
+      "schedule": "0 3 * * 0"
+    }
+  ]
+}

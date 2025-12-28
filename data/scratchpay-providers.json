@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Austin Urban Vet Center",
+    "address": "710 West 5th Street",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78701",
+    "source": "scratchpay",
+    "fetchedAt": "2025-12-26T23:38:46.739Z"
+  },
+  {
+    "name": "THRIVE Test Location, Live",
+    "address": "2222 RIO GRANDE ST.",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78705",
+    "source": "scratchpay",
+    "fetchedAt": "2025-12-26T23:38:46.739Z"
+  },
+  {
+    "name": "Modern Animal - South Lamar",
+    "address": "1100 South Lamar Boulevard",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78704",
+    "source": "scratchpay",
+    "fetchedAt": "2025-12-26T23:38:46.739Z"
+  },
+  {
+    "name": "Honnas Veterinary",
+    "address": "1615 South Lamar Boulevard",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78704",
+    "source": "scratchpay",
+    "fetchedAt": "2025-12-26T23:38:46.739Z"
+  },
+  {
+    "name": "Paz Veterinary - East",
+    "address": "3300 East 7th street ste 101",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78702",
+    "source": "scratchpay",
+    "fetchedAt": "2025-12-26T23:38:46.739Z"
+  },
+  {
+    "name": "Livewell Animal Hospital of Austin",
+    "address": "507 Pressler St, Ste 700",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78703",
+    "source": "scratchpay",
+    "fetchedAt": "2025-12-26T23:38:46.739Z"
+  },
+  {
+    "name": "Thrive Pet Healthcare South Lamar",
+    "address": "3318 S Lamar Blvd",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78704",
+    "source": "scratchpay",
+    "fetchedAt": "2025-12-26T23:38:46.739Z"
+  }
+]

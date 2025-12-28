@@ -1,0 +1,229 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Core clinic data
+model Clinic {
+  id          String   @id @default(cuid())
+  placeId     String?  @unique @map("place_id") // Google Places ID
+  name        String
+  address     String
+  city        String   @default("Austin")
+  state       String   @default("TX")
+  zip         String?
+  lat         Float?
+  lng         Float?
+  phone       String?
+  websiteUrl  String?  @map("website_url")
+  source      String   @default("manual") // places, osm, manual
+  rating      Float?
+  ratingCount Int?     @map("rating_count")
+  
+  // Computed scores (cached for performance)
+  financingTier      String?  @map("financing_tier") // A, B, C, D, E
+  transparencyScore  Int?     @map("transparency_score") // 0-100
+  affordabilityScore Int?     @map("affordability_score") // 0-100
+  confidence         Float?   @default(0) // 0-1
+
+  lastVerifiedAt DateTime? @map("last_verified_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  crawlRuns                 CrawlRun[]
+  pages                     Page[]
+  extractedSignals          ExtractedSignal[]
+  evidence                  Evidence[]
+  communityReports          CommunityReport[]
+  extractedPrices           ExtractedPrice[]
+  financingProviderMatches  FinancingProviderMatch[]
+  viewCount                 Int               @default(0) @map("view_count")
+
+  @@index([city, state])
+  @@index([affordabilityScore])
+  @@index([financingTier])
+  @@map("clinics")
+}
+
+// Track each crawl attempt
+model CrawlRun {
+  id           String    @id @default(cuid())
+  clinicId     String    @map("clinic_id")
+  startedAt    DateTime  @default(now()) @map("started_at")
+  finishedAt   DateTime? @map("finished_at")
+  status       String    @default("pending") // pending, running, completed, failed
+  pagesCrawled Int       @default(0) @map("pages_crawled")
+  errors       Json?     // Store error details as JSON
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([status])
+  @@map("crawl_runs")
+}
+
+// Individual pages fetched during crawls
+model Page {
+  id          String   @id @default(cuid())
+  clinicId    String   @map("clinic_id")
+  url         String
+  fetchedAt   DateTime @default(now()) @map("fetched_at")
+  contentHash String?  @map("content_hash")
+  textContent String?  @map("text_content") @db.Text
+  httpStatus  Int?     @map("http_status")
+  title       String?
+  
+  // Track if this page has financing/pricing keywords
+  hasFinancingKeywords    Boolean @default(false) @map("has_financing_keywords")
+  hasTransparencyKeywords Boolean @default(false) @map("has_transparency_keywords")
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@unique([clinicId, url])
+  @@index([clinicId])
+  @@index([contentHash])
+  @@map("pages")
+}
+
+// Extracted signals from clinic websites
+model ExtractedSignal {
+  id               String   @id @default(cuid())
+  clinicId         String   @map("clinic_id")
+  
+  // Financing data
+  financingProviders Json    @default("[]") @map("financing_providers") // Array of provider enums
+  financingTier      String? @map("financing_tier") // A, B, C, D, E
+  inHousePaymentPlan Boolean @default(false) @map("in_house_payment_plan")
+  deferredInterest   Boolean @default(false) @map("deferred_interest")
+  
+  // Transparency data
+  transparencyScore  Int     @default(0) @map("transparency_score") // 0-100
+  hasPriceList       Boolean @default(false) @map("has_price_list")
+  hasExamFee         Boolean @default(false) @map("has_exam_fee")
+  hasEstimatePromise Boolean @default(false) @map("has_estimate_promise")
+  
+  // Computed overall
+  affordabilityScore Int     @default(0) @map("affordability_score")
+  confidence         Float   @default(0) // 0-1
+  
+  lastVerifiedAt DateTime @default(now()) @map("last_verified_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@map("extracted_signals")
+}
+
+// Evidence snippets supporting each claim
+model Evidence {
+  id        String   @id @default(cuid())
+  clinicId  String   @map("clinic_id")
+  category  String   // FINANCING or TRANSPARENCY
+  label     String   // e.g., "CareCredit accepted", "Exam fee disclosed"
+  snippet   String   @db.Text // The actual text evidence (max ~200 chars)
+  sourceUrl String   @map("source_url")
+  fetchedAt DateTime @default(now()) @map("fetched_at")
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([category])
+  @@map("evidence")
+}
+
+// Admin logs for tracking system activity
+model AdminLog {
+  id        String   @id @default(cuid())
+  action    String
+  details   Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("admin_logs")
+}
+
+// Extracted pricing data from clinic websites
+model ExtractedPrice {
+  id          String   @id @default(cuid())
+  clinicId    String   @map("clinic_id")
+
+  // Service categorization
+  serviceType String   @map("service_type") // exam, vaccines, spay, neuter, dental, bloodwork, emergency, wellness_plan
+  serviceName String?  @map("service_name") // More specific: "New patient exam", "Rabies vaccine", etc.
+
+  // Price data (in cents)
+  minPrice    Int      @map("min_price")
+  maxPrice    Int?     @map("max_price")    // null if single price, not a range
+
+  // Evidence
+  snippet     String   @db.Text            // The text evidence
+  sourceUrl   String   @map("source_url")
+  fetchedAt   DateTime @default(now()) @map("fetched_at")
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([serviceType])
+  @@map("extracted_prices")
+}
+
+// Community reports from pet owners
+model CommunityReport {
+  id          String   @id @default(cuid())
+  clinicId    String   @map("clinic_id")
+  submittedAt DateTime @default(now()) @map("submitted_at")
+
+  // Core questions
+  workedWithOnCost String? @map("worked_with_on_cost") // offered_options | offered_plan | not_asked | felt_dismissed
+  receivedEstimate String? @map("received_estimate")   // written | verbal | none | dont_remember
+
+  // Optional pricing data
+  serviceType String? @map("service_type") // exam | vaccines | spay_neuter | dental | emergency | other
+  amountPaid  Int?    @map("amount_paid")  // in cents
+  visitYear   Int?    @map("visit_year")
+  feltFair    Boolean? @map("felt_fair")
+
+  // Anti-fraud
+  ipHash    String? @map("ip_hash")
+  userAgent String? @map("user_agent")
+  verified  Boolean @default(false)
+  flagged   Boolean @default(false)
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@map("community_reports")
+}
+
+// Financing provider directory matches
+// Tracks which clinics accept which BNPL providers based on provider directory data
+model FinancingProviderMatch {
+  id              String   @id @default(cuid())
+  clinicId        String   @map("clinic_id")
+
+  // Provider info
+  provider        String   // CHERRY, SUNBIT, AFFIRM, VETBILLING, SCRATCHPAY, etc.
+  source          String   // finder.withcherry.com, scratchpay.com, sunbit.com
+  matchedAt       DateTime @default(now()) @map("matched_at")
+  confidence      Float    @default(0.8)
+
+  // Raw data from provider directory
+  providerName    String?  @map("provider_name")
+  providerAddress String?  @map("provider_address")
+  providerPhone   String?  @map("provider_phone")
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@unique([clinicId, provider, source])
+  @@index([clinicId])
+  @@index([provider])
+  @@map("financing_provider_matches")
+}

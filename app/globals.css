@@ -1,0 +1,203 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 156 11% 13%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 156 11% 13%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 156 11% 13%;
+    
+    --primary: 120 11% 38%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 25 45% 92%;
+    --secondary-foreground: 25 40% 25%;
+    
+    --muted: 120 8% 95%;
+    --muted-foreground: 120 8% 45%;
+    
+    --accent: 195 35% 85%;
+    --accent-foreground: 195 50% 25%;
+    
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 120 10% 88%;
+    --input: 120 10% 88%;
+    --ring: 120 11% 38%;
+    
+    --radius: 0.625rem;
+    
+    /* Custom tokens */
+    --tier-a: 142 76% 36%;
+    --tier-b: 173 58% 39%;
+    --tier-c: 38 92% 50%;
+    --tier-d: 15 75% 50%;
+    --tier-e: 0 0% 60%;
+    
+    --trust-green: 120 11% 38%;
+    --calm-blue: 195 42% 45%;
+    --warm-coral: 17 76% 59%;
+  }
+
+  .dark {
+    --background: 156 11% 8%;
+    --foreground: 120 8% 95%;
+    
+    --card: 156 11% 10%;
+    --card-foreground: 120 8% 95%;
+    
+    --popover: 156 11% 10%;
+    --popover-foreground: 120 8% 95%;
+    
+    --primary: 120 25% 55%;
+    --primary-foreground: 156 11% 8%;
+    
+    --secondary: 25 25% 20%;
+    --secondary-foreground: 25 40% 85%;
+    
+    --muted: 156 11% 15%;
+    --muted-foreground: 120 8% 60%;
+    
+    --accent: 195 25% 25%;
+    --accent-foreground: 195 50% 85%;
+    
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 156 11% 20%;
+    --input: 156 11% 20%;
+    --ring: 120 25% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+  
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+}
+
+/* Custom scrollbar for a more refined look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Focus states for accessibility */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Tier badge colors */
+.tier-a { background: hsl(var(--tier-a)); color: white; }
+.tier-b { background: hsl(var(--tier-b)); color: white; }
+.tier-c { background: hsl(var(--tier-c)); color: hsl(38 92% 15%); }
+.tier-d { background: hsl(var(--tier-d)); color: white; }
+.tier-e { background: hsl(var(--tier-e)); color: white; }
+
+/* Evidence card styles */
+.evidence-card {
+  @apply relative overflow-hidden;
+}
+
+.evidence-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0.25rem;
+  background-color: hsl(120 11% 38%);
+}
+
+/* Subtle pattern background */
+.pattern-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Smooth transitions */
+.transition-smooth {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card hover effect */
+.card-hover {
+  @apply transition-all duration-200;
+}
+
+.card-hover:hover {
+  @apply shadow-lg -translate-y-0.5;
+}
+
+/* Loading shimmer */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 2s infinite;
+}
