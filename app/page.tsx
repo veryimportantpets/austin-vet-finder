@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import prisma from '@/lib/db';
 import { ClinicCard } from '@/components/clinic-card';
 import { Trophy, CreditCard, FileText, MapPin } from 'lucide-react';
