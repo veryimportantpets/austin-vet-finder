@@ -243,8 +243,11 @@ export default async function HomePage() {
           <h1 className="font-display text-xl md:text-2xl font-semibold text-sage-900">
             Austin Vet Affordability Finder
           </h1>
-          <p className="text-sm text-sage-600">
-            Find affordable veterinary care for your pet · Last updated {formatDate(lastUpdate)}
+          <p className="text-sm text-sage-600 max-w-2xl">
+            We crawl vet clinic websites across Austin to find pricing, payment plans, and financing options so you can make informed decisions about your pet&apos;s care.
+          </p>
+          <p className="text-xs text-sage-500 mt-1">
+            Last updated {formatDate(lastUpdate)}
           </p>
         </div>
       </header>
