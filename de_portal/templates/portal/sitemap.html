@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Sitemap - {{ project.name }} - DE Portal{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'project_detail' project.pk %}">{{ project.name }}</a></li>
+        <li class="breadcrumb-item active">Sitemap</li>
+    </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Sitemap</h2>
+    {% if project.sitemap_approved %}
+    <span class="badge bg-success">Approved</span>
+    {% else %}
+    <form method="post" action="{% url 'approve_sitemap' project.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Approve Sitemap</button>
+    </form>
+    {% endif %}
+</div>
+
+<!-- Add Page Form -->
+<div class="card mb-4">
+    <div class="card-header">Add Page</div>
+    <div class="card-body">
+        <form method="post" action="{% url 'add_page' project.pk %}"
+              hx-post="{% url 'add_page' project.pk %}" hx-target="#page-list" hx-swap="innerHTML">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="title" class="form-control" placeholder="Page Title" required>
+                </div>
+                <div class="col-md-3">
+                    <select name="page_type" class="form-select">
+                        <option value="">Select Type</option>
+                        {% for pt in page_types %}
+                        <option value="{{ pt.pk }}">{{ pt.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="content_source" class="form-select">
+                        <option value="client_provides">Client Provides</option>
+                        <option value="existing_site">Reuse Existing</option>
+                        <option value="de_writes">DE Writes</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Add</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Page List -->
+<div class="card">
+    <div class="card-header">Pages</div>
+    <div class="list-group list-group-flush" id="page-list">
+        {% include "portal/partials/page_list.html" %}
+    </div>
+</div>
+{% endblock %}

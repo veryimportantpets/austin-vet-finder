@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}{{ card.title }} - DE Portal{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'tasks' %}">Tasks</a></li>
+        <li class="breadcrumb-item active">{{ card.title|truncatewords:5 }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h4 class="card-title mb-0">{{ card.title }}</h4>
+                    <div id="card-status">
+                        {% include "portal/partials/card_status.html" %}
+                    </div>
+                </div>
+
+                {% if card.why_it_matters %}
+                <div class="alert alert-light">
+                    <strong>Why this matters:</strong> {{ card.why_it_matters }}
+                </div>
+                {% endif %}
+
+                {% if card.instructions %}
+                <div class="mb-4">
+                    <h6>Instructions</h6>
+                    <p>{{ card.instructions|linebreaks }}</p>
+                </div>
+                {% endif %}
+
+                {% if card.best_practices %}
+                <div class="mb-4">
+                    <details>
+                        <summary class="fw-bold mb-2" style="cursor: pointer;">Best Practices</summary>
+                        <div class="ps-3 border-start">{{ card.best_practices|linebreaks }}</div>
+                    </details>
+                </div>
+                {% endif %}
+
+                {% if card.status != 'accepted' %}
+                <hr>
+                <h5>Your Response</h5>
+                <form method="post" action="{% url 'submit_card' card.pk %}" enctype="multipart/form-data"
+                      hx-post="{% url 'submit_card' card.pk %}" hx-target="#card-status" hx-swap="innerHTML">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="text_content" class="form-label">Text (optional)</label>
+                        <textarea class="form-control" id="text_content" name="text_content" rows="4"
+                            placeholder="Add any notes or content here...">{% if latest_submission %}{{ latest_submission.text_content }}{% endif %}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="files" class="form-label">Upload Files</label>
+                        <input type="file" class="form-control" id="files" name="files" multiple>
+                        <small class="text-muted">You can upload multiple files</small>
+                    </div>
+
+                    {% if attachments %}
+                    <div class="mb-3">
+                        <label class="form-label">Previous Uploads</label>
+                        <ul class="list-unstyled">
+                            {% for att in attachments %}
+                            <li><i class="bi bi-file-earmark"></i> <a href="{{ att.file_url }}" target="_blank">{{ att.filename }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="htmx-indicator spinner-border spinner-border-sm me-1"></span>
+                        Submit
+                    </button>
+                </form>
+                {% else %}
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle"></i> This task has been completed and accepted.
+                </div>
+                {% endif %}
+
+                {% if user.is_internal and card.status == 'submitted' %}
+                <hr>
+                <h6>Designer Actions</h6>
+                <div class="btn-group">
+                    <form method="post" action="{% url 'accept_card' card.pk %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                    </form>
+                    <form method="post" action="{% url 'needs_info_card' card.pk %}" class="d-inline ms-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning btn-sm">Request More Info</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Thread -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-chat"></i> Questions about this task?
+            </div>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;" id="message-list">
+                {% include "portal/partials/message_list.html" %}
+            </div>
+            <div class="card-footer">
+                <form method="post" action="{% url 'post_message' thread.pk %}"
+                      hx-post="{% url 'post_message' thread.pk %}" hx-target="#message-list" hx-swap="innerHTML">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="body" placeholder="Type a message..." required>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

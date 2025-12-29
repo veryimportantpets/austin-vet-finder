@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Login - DE Portal{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">DE Portal</h2>
+                <p class="text-center text-muted mb-4">Enter your email to receive a login link</p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" class="form-control form-control-lg" id="email" name="email" required autofocus>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">Send Login Link</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

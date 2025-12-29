@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Internal Tasks - {{ project.name }} - DE Portal{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'project_detail' project.pk %}">{{ project.name }}</a></li>
+        <li class="breadcrumb-item active">Internal Tasks</li>
+    </ol>
+</nav>
+
+<h2 class="mb-4">Internal Tasks</h2>
+
+{% if cards %}
+<div class="list-group">
+    {% for card in cards %}
+    <a href="{% url 'card_detail' card.pk %}" class="list-group-item list-group-item-action">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="mb-1">{{ card.title }}</h6>
+                {% if card.page %}
+                <small class="text-muted">{{ card.page.title }}</small>
+                {% endif %}
+            </div>
+            {% include "portal/partials/card_status.html" %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+    <p>No internal tasks</p>
+</div>
+{% endif %}
+{% endblock %}

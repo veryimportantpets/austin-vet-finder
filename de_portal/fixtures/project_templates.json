@@ -1,0 +1,168 @@
+[
+  {
+    "model": "projects.projecttemplate",
+    "pk": 1,
+    "fields": {
+      "slug": "startup",
+      "name": "New Practice (Startup)",
+      "description": "Template for new veterinary practices that need a website built from scratch.",
+      "phase_order": ["discovery", "creative", "launch"],
+      "discovery_cards": [
+        {
+          "title": "Complete onboarding questionnaire",
+          "why_it_matters": "This helps us understand your practice, goals, and vision for your website.",
+          "instructions": "Please complete our onboarding questionnaire to tell us about your practice, target audience, and website goals.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Upload logo and brand assets",
+          "why_it_matters": "Your logo and brand colors ensure your website matches your practice identity.",
+          "instructions": "Please upload your logo files (preferably in PNG, SVG, or EPS format) and share your brand colors if you have them.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Confirm business information",
+          "why_it_matters": "Accurate business info ensures clients can find and contact you.",
+          "instructions": "Please confirm your business name, address, phone number, email, and hours of operation.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Approve sitemap",
+          "why_it_matters": "The sitemap defines all the pages on your website. Approving it lets us start building.",
+          "instructions": "Review the proposed sitemap and approve it or suggest changes.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        }
+      ],
+      "creative_cards": [],
+      "launch_cards": [
+        {
+          "title": "Provide domain registrar login",
+          "why_it_matters": "We need access to point your domain to your new website.",
+          "instructions": "Please provide the login credentials for your domain registrar (e.g., GoDaddy, Namecheap).",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Confirm email hosting needs",
+          "why_it_matters": "We want to ensure your email continues working during the transition.",
+          "instructions": "Tell us about your current email setup and any migration needs.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Confirm launch date availability",
+          "why_it_matters": "We want to make sure you're available if any issues arise during launch.",
+          "instructions": "Please confirm you'll be available on the proposed launch date.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Final approval",
+          "why_it_matters": "Your final sign-off tells us everything is ready to go live.",
+          "instructions": "Review the complete website and give us your final approval to launch.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        }
+      ],
+      "page_type_card_packs": {},
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "projects.projecttemplate",
+    "pk": 2,
+    "fields": {
+      "slug": "existing",
+      "name": "Existing Practice",
+      "description": "Template for existing practices with a current website that needs redesign.",
+      "phase_order": ["discovery", "creative", "launch"],
+      "discovery_cards": [
+        {
+          "title": "Complete onboarding questionnaire",
+          "why_it_matters": "This helps us understand your practice and what you want to improve with your new website.",
+          "instructions": "Please complete our onboarding questionnaire. Be sure to include what you like and don't like about your current site.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Upload logo and brand assets",
+          "why_it_matters": "Even if we're reusing your logo, we need high-quality files for the new design.",
+          "instructions": "Please upload your logo files (preferably in PNG, SVG, or EPS format). If you're updating your brand, include new assets.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Confirm business information",
+          "why_it_matters": "We want to make sure all your contact info is current.",
+          "instructions": "Please review and confirm your business name, address, phone number, email, and hours of operation.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Approve sitemap",
+          "why_it_matters": "The sitemap defines all the pages on your new website.",
+          "instructions": "Review the proposed sitemap and approve it or suggest changes. We've based it on your current site structure.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        }
+      ],
+      "creative_cards": [],
+      "launch_cards": [
+        {
+          "title": "Provide domain registrar login",
+          "why_it_matters": "We need access to update DNS settings for the new website.",
+          "instructions": "Please provide the login credentials for your domain registrar.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Confirm email hosting and migration needs",
+          "why_it_matters": "We need to ensure email continues working when we switch to the new site.",
+          "instructions": "Tell us about your current email setup and whether you need migration assistance.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Confirm launch date availability",
+          "why_it_matters": "We want to coordinate the switch from your old site to the new one smoothly.",
+          "instructions": "Please confirm you'll be available on the proposed launch date.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        },
+        {
+          "title": "Final approval",
+          "why_it_matters": "Your final sign-off tells us you're ready to replace your current website.",
+          "instructions": "Review the complete new website and give us your final approval to launch.",
+          "visibility": "client",
+          "kind": "client_task",
+          "required": true
+        }
+      ],
+      "page_type_card_packs": {},
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]

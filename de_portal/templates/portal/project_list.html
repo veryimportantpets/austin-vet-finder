@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Projects - DE Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Projects</h2>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-auto">
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                    <option value="paused" {% if status_filter == 'paused' %}selected{% endif %}>Paused</option>
+                    <option value="complete" {% if status_filter == 'complete' %}selected{% endif %}>Complete</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <select name="phase" class="form-select">
+                    <option value="">All Phases</option>
+                    <option value="discovery" {% if phase_filter == 'discovery' %}selected{% endif %}>Discovery</option>
+                    <option value="creative" {% if phase_filter == 'creative' %}selected{% endif %}>Creative</option>
+                    <option value="launch" {% if phase_filter == 'launch' %}selected{% endif %}>Launch</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if projects %}
+<div class="list-group">
+    {% for project in projects %}
+    <a href="{% url 'project_detail' project.pk %}" class="list-group-item list-group-item-action">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="mb-1">{{ project.name }}</h6>
+                <small class="text-muted">{{ project.org.name }}</small>
+            </div>
+            <div>
+                <span class="badge bg-secondary">{{ project.get_phase_display }}</span>
+                <span class="badge {% if project.status == 'active' %}bg-success{% elif project.status == 'paused' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                    {{ project.get_status_display }}
+                </span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+    <p>No projects found</p>
+</div>
+{% endif %}
+{% endblock %}

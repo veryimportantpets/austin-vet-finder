@@ -1,0 +1,146 @@
+[
+  {
+    "model": "pages.pagetype",
+    "pk": 1,
+    "fields": {
+      "slug": "home",
+      "name": "Home",
+      "description": "The main landing page for the website",
+      "best_practices": "Include:\n- A clear value proposition\n- Overview of key services\n- Trust signals (certifications, years in business)\n- Easy navigation to other sections\n- Contact information or call-to-action",
+      "sort_order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 2,
+    "fields": {
+      "slug": "about",
+      "name": "About Us",
+      "description": "Information about the practice and its history",
+      "best_practices": "Include:\n- Practice history and mission\n- What makes you different\n- Facility photos\n- Community involvement\n- Any certifications or accreditations",
+      "sort_order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 3,
+    "fields": {
+      "slug": "team",
+      "name": "Team",
+      "description": "Staff bios and photos",
+      "best_practices": "For each team member, include:\n- Professional headshot\n- Full name and credentials (DVM, CVT, etc.)\n- Role/title\n- Brief bio (education, experience, specialties)\n- Personal touch (pets, hobbies)\n\nTips:\n- Keep bios consistent in length\n- Use high-quality, well-lit photos\n- Include all client-facing staff",
+      "sort_order": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 4,
+    "fields": {
+      "slug": "services_overview",
+      "name": "Services Overview",
+      "description": "Overview of all services offered",
+      "best_practices": "Include:\n- List of all major service categories\n- Brief description of each\n- Links to detailed service pages\n- Any unique or specialized services\n- Technology or equipment highlights",
+      "sort_order": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 5,
+    "fields": {
+      "slug": "service_detail",
+      "name": "Service Detail",
+      "description": "Detailed page for a specific service",
+      "best_practices": "Include:\n- What the service is and why it's important\n- Who/what species it's for\n- What to expect during the visit\n- Benefits for the pet and owner\n- Common FAQs about this service\n- When to schedule/how often needed\n- Related services",
+      "sort_order": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 6,
+    "fields": {
+      "slug": "faq",
+      "name": "FAQ",
+      "description": "Frequently asked questions",
+      "best_practices": "Tips:\n- Use actual questions clients ask\n- Keep answers concise and clear\n- Avoid medical jargon\n- Group by category if you have many\n- Include questions about:\n  - Appointments and scheduling\n  - Payment and insurance\n  - Emergency procedures\n  - New patient process\n  - Common services",
+      "sort_order": 6,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 7,
+    "fields": {
+      "slug": "pricing",
+      "name": "Pricing",
+      "description": "Service pricing information",
+      "best_practices": "Include:\n- Exam fees\n- Common procedure ranges\n- Payment options accepted\n- Financing information\n- Insurance information\n\nNote: You can list ranges rather than exact prices if preferred.",
+      "sort_order": 7,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 8,
+    "fields": {
+      "slug": "contact",
+      "name": "Contact",
+      "description": "Contact information and hours",
+      "best_practices": "Include:\n- Physical address with map\n- Phone number(s)\n- Email address\n- Hours of operation (regular and holiday)\n- Parking information\n- Emergency/after-hours instructions\n- Online booking link (if applicable)",
+      "sort_order": 8,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 9,
+    "fields": {
+      "slug": "forms",
+      "name": "Forms",
+      "description": "New patient forms and documents",
+      "best_practices": "Include:\n- New patient registration form\n- Medical history form\n- Consent forms\n- Instructions for completing forms\n\nProvide existing PDFs or links to current forms.",
+      "sort_order": 9,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 10,
+    "fields": {
+      "slug": "resources",
+      "name": "Resources",
+      "description": "Pet care resources and educational content",
+      "best_practices": "Include:\n- Pet care tips\n- Seasonal health alerts\n- Links to trusted resources\n- Downloadable guides\n- Video content if available",
+      "sort_order": 10,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 11,
+    "fields": {
+      "slug": "blog",
+      "name": "Blog",
+      "description": "Blog or news section",
+      "best_practices": "Best practices for blog content:\n- Post regularly (at least monthly)\n- Cover seasonal topics\n- Answer common client questions\n- Share practice news\n- Use engaging images",
+      "sort_order": 11,
+      "is_active": true
+    }
+  },
+  {
+    "model": "pages.pagetype",
+    "pk": 12,
+    "fields": {
+      "slug": "other",
+      "name": "Other",
+      "description": "Custom page type",
+      "best_practices": "",
+      "sort_order": 99,
+      "is_active": true
+    }
+  }
+]

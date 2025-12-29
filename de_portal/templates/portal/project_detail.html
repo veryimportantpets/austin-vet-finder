@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }} - DE Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2>{{ project.name }}</h2>
+        <p class="text-muted">{{ project.org.name }}</p>
+    </div>
+    <div>
+        <span class="badge bg-secondary fs-6">{{ project.get_phase_display }}</span>
+        <span class="badge {% if project.status == 'active' %}bg-success{% elif project.status == 'paused' %}bg-warning text-dark{% else %}bg-secondary{% endif %} fs-6">
+            {{ project.get_status_display }}
+        </span>
+    </div>
+</div>
+
+{% if project.is_paused %}
+<div class="alert alert-warning">
+    <i class="bi bi-pause-circle"></i> This project is paused.
+    <form method="post" action="{% url 'resume_project' project.pk %}" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-warning ms-2">Resume</button>
+    </form>
+</div>
+{% endif %}
+
+<!-- Progress -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between mb-2">
+            <span>Client Progress</span>
+            <span>{{ progress_percent }}%</span>
+        </div>
+        <div class="progress" style="height: 10px;">
+            <div class="progress-bar" style="width: {{ progress_percent }}%"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <a href="{% url 'sitemap' project.pk %}" class="card text-decoration-none h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-diagram-3 fs-3 text-primary"></i>
+                <p class="mb-0 mt-2">Sitemap</p>
+                <small class="text-muted">{{ pages|length }} pages</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{% url 'schedule' project.pk %}" class="card text-decoration-none h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-calendar fs-3 text-primary"></i>
+                <p class="mb-0 mt-2">Schedule</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{% url 'internal_cards' project.pk %}" class="card text-decoration-none h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-list-check fs-3 text-primary"></i>
+                <p class="mb-0 mt-2">Internal Tasks</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{% url 'project_settings' project.pk %}" class="card text-decoration-none h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-gear fs-3 text-primary"></i>
+                <p class="mb-0 mt-2">Settings</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Phase Control -->
+<div class="card mb-4">
+    <div class="card-header">Phase Control</div>
+    <div class="card-body">
+        <form method="post" action="{% url 'change_phase' project.pk %}" class="d-flex gap-2">
+            {% csrf_token %}
+            <select name="phase" class="form-select" style="max-width: 200px;">
+                <option value="discovery" {% if project.phase == 'discovery' %}selected{% endif %}>Discovery</option>
+                <option value="creative" {% if project.phase == 'creative' %}selected{% endif %}>Creative</option>
+                <option value="launch" {% if project.phase == 'launch' %}selected{% endif %}>Launch</option>
+                <option value="complete" {% if project.phase == 'complete' %}selected{% endif %}>Complete</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Update Phase</button>
+        </form>
+        {% if not project.is_paused %}
+        <hr>
+        <form method="post" action="{% url 'pause_project' project.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-warning">Pause Project</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Recent Client Cards -->
+<div class="card mb-4">
+    <div class="card-header">Client Tasks</div>
+    <div class="card-body">
+        {% for card in cards|slice:":10" %}
+        {% if card.visibility == 'client' %}
+        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+            <a href="{% url 'card_detail' card.pk %}" class="text-decoration-none">{{ card.title }}</a>
+            {% include "portal/partials/card_status.html" %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

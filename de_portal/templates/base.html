@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DE Portal{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        :root {
+            --de-primary: #2563eb;
+            --de-secondary: #64748b;
+        }
+        body {
+            background-color: #f8fafc;
+        }
+        .navbar-brand {
+            font-weight: 600;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background-color: var(--de-primary);
+            border-color: var(--de-primary);
+        }
+        .progress-bar {
+            background-color: var(--de-primary);
+        }
+        .badge-needs-de {
+            background-color: #dc3545;
+        }
+        .badge-waiting {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .badge-overdue {
+            background-color: #dc3545;
+        }
+        .status-todo { color: #6b7280; }
+        .status-submitted { color: #f59e0b; }
+        .status-needs_info { color: #ef4444; }
+        .status-accepted { color: #10b981; }
+        .next-step-card {
+            border-left: 4px solid var(--de-primary);
+        }
+        .activity-item {
+            border-left: 2px solid #e5e7eb;
+            padding-left: 1rem;
+            margin-left: 0.5rem;
+        }
+        .htmx-indicator {
+            display: none;
+        }
+        .htmx-request .htmx-indicator {
+            display: inline-block;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">DE Portal</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if user.is_internal %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inbox' %}"><i class="bi bi-inbox"></i> Inbox</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'project_list' %}"><i class="bi bi-folder"></i> Projects</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}"><i class="bi bi-house"></i> Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'tasks' %}"><i class="bi bi-check-square"></i> Tasks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'pages' %}"><i class="bi bi-file-earmark"></i> Pages</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'messages' %}"><i class="bi bi-chat"></i> Messages</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{% url 'notifications' %}">
+                            <i class="bi bi-bell"></i>
+                            {% if unread_notifications_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ unread_notifications_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" data-bs-toggle="dropdown">
+                            {{ user.get_short_name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="py-4">
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

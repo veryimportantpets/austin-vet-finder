@@ -1,0 +1,7 @@
+<span class="badge
+    {% if thread.triage_state == 'needs_de' %}bg-danger
+    {% elif thread.triage_state == 'waiting_client' %}bg-warning text-dark
+    {% elif thread.triage_state == 'resolved' %}bg-success
+    {% endif %}">
+    {{ thread.get_triage_state_display }}
+</span>

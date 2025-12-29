@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Home - DE Portal{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>Welcome back!</h2>
+        <p class="text-muted">Here's your project progress for {{ project.name }}</p>
+    </div>
+</div>
+
+<!-- Progress Bar -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold">Overall Progress</span>
+            <span>{{ progress_percent }}%</span>
+        </div>
+        <div class="progress" style="height: 20px;">
+            <div class="progress-bar" role="progressbar" style="width: {{ progress_percent }}%"></div>
+        </div>
+        <div class="d-flex justify-content-between mt-2 small text-muted">
+            <span>Phase: {{ project.get_phase_display }}</span>
+            {% if estimated_launch %}
+            <span>Est. Launch: {{ estimated_launch|date:"M j, Y" }}</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Next Step -->
+    <div class="col-lg-8">
+        <h5 class="mb-3">Your Next Step</h5>
+        {% if next_step %}
+        <div class="card next-step-card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="card-title mb-1">{{ next_step.title }}</h5>
+                        {% if next_step.why_it_matters %}
+                        <p class="text-muted small mb-2">{{ next_step.why_it_matters }}</p>
+                        {% endif %}
+                        {% if next_step.due_date %}
+                        <span class="badge {% if next_step.is_overdue %}bg-danger{% else %}bg-secondary{% endif %}">
+                            Due: {{ next_step.due_date|date:"M j" }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'card_detail' next_step.pk %}" class="btn btn-primary">
+                        Start <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card mb-4">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                <p class="mt-3 mb-0">All caught up! No pending tasks.</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Due Soon -->
+        {% if due_soon %}
+        <h5 class="mb-3">Coming Up</h5>
+        <div class="list-group mb-4">
+            {% for card in due_soon %}
+            <a href="{% url 'card_detail' card.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <span>{{ card.title }}</span>
+                <span class="badge bg-secondary">Due {{ card.due_date|date:"M j" }}</span>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="col-lg-4">
+        <h5 class="mb-3">Recent Activity</h5>
+        {% if recent_activity %}
+        <div class="card">
+            <div class="card-body">
+                {% for item in recent_activity %}
+                <div class="activity-item mb-3">
+                    <small class="text-muted">{{ item.timestamp|timesince }} ago</small>
+                    <p class="mb-0 small">{{ item.title }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="card">
+            <div class="card-body text-center text-muted">
+                <p class="mb-0">No recent activity</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

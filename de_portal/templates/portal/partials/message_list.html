@@ -1,0 +1,14 @@
+{% load humanize %}
+{% for msg in messages %}
+<div class="mb-3 {% if msg.sender.is_internal %}text-end{% endif %}">
+    <div class="d-inline-block p-2 rounded {% if msg.sender.is_internal %}bg-primary text-white{% else %}bg-light{% endif %}" style="max-width: 85%;">
+        <small class="d-block {% if msg.sender.is_internal %}text-white-50{% else %}text-muted{% endif %}">
+            {{ msg.sender.get_short_name|default:"Unknown" }}
+        </small>
+        {{ msg.body }}
+    </div>
+    <small class="d-block text-muted">{{ msg.created_at|timesince }} ago</small>
+</div>
+{% empty %}
+<p class="text-muted text-center">No messages yet</p>
+{% endfor %}

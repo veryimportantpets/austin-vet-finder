@@ -1,0 +1,22 @@
+{% for page in pages %}
+<div class="list-group-item d-flex justify-content-between align-items-center">
+    <div>
+        <strong>{{ page.title }}</strong>
+        {% if page.page_type %}
+        <span class="badge bg-light text-dark ms-2">{{ page.page_type.name }}</span>
+        {% endif %}
+    </div>
+    <div>
+        {% include "portal/partials/page_status.html" %}
+        <form method="post" action="{% url 'delete_page' page.pk %}" class="d-inline ms-2"
+              hx-post="{% url 'delete_page' page.pk %}" hx-target="closest .list-group-item" hx-swap="outerHTML">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this page?')">
+                <i class="bi bi-trash"></i>
+            </button>
+        </form>
+    </div>
+</div>
+{% empty %}
+<div class="list-group-item text-muted">No pages added yet</div>
+{% endfor %}

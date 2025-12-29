@@ -1,0 +1,10 @@
+<span class="badge
+    {% if page.status == 'not_started' %}bg-secondary
+    {% elif page.status == 'in_build' %}bg-info
+    {% elif page.status == 'ready_for_review' %}bg-warning text-dark
+    {% elif page.status == 'changes_requested' %}bg-danger
+    {% elif page.status == 'approved' %}bg-success
+    {% elif page.status == 'locked' %}bg-dark
+    {% endif %}">
+    {{ page.get_status_display }}
+</span>

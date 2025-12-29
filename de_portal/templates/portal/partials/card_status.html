@@ -1,0 +1,13 @@
+<span class="badge
+    {% if card.status == 'todo' %}bg-secondary
+    {% elif card.status == 'submitted' %}bg-warning text-dark
+    {% elif card.status == 'needs_info' %}bg-danger
+    {% elif card.status == 'accepted' %}bg-success
+    {% endif %}">
+    {{ card.get_status_display }}
+</span>
+{% if card.due_date %}
+<span class="badge {% if card.is_overdue %}bg-danger{% else %}bg-light text-dark{% endif %} ms-1">
+    Due: {{ card.due_date|date:"M j" }}
+</span>
+{% endif %}

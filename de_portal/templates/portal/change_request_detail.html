@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}{{ cr.title }} - DE Portal{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'change_requests' %}">Change Requests</a></li>
+        <li class="breadcrumb-item active">{{ cr.title|truncatewords:5 }}</li>
+    </ol>
+</nav>
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h4>{{ cr.title }}</h4>
+            <span class="badge
+                {% if cr.status == 'requested' %}bg-warning text-dark
+                {% elif cr.status == 'approved' %}bg-success
+                {% elif cr.status == 'declined' %}bg-danger
+                {% elif cr.status == 'scheduled' %}bg-info
+                {% else %}bg-secondary{% endif %} fs-6">
+                {{ cr.get_status_display }}
+            </span>
+        </div>
+
+        <div class="mb-4">
+            <h6>Request</h6>
+            <p>{{ cr.description|linebreaks }}</p>
+            <small class="text-muted">
+                Requested by {{ cr.requested_by.get_full_name|default:"Unknown" }} on {{ cr.created_at|date:"M j, Y" }}
+            </small>
+        </div>
+
+        {% if cr.response %}
+        <div class="mb-4">
+            <h6>Response</h6>
+            <p>{{ cr.response|linebreaks }}</p>
+            <small class="text-muted">
+                Responded by {{ cr.responded_by.get_full_name|default:"Unknown" }} on {{ cr.responded_at|date:"M j, Y" }}
+            </small>
+        </div>
+        {% endif %}
+
+        {% if user.is_internal and cr.status == 'requested' %}
+        <hr>
+        <h6>Actions</h6>
+        <div class="row g-3">
+            <div class="col-12">
+                <textarea id="response" class="form-control mb-2" rows="2" placeholder="Add a response (optional)..."></textarea>
+            </div>
+            <div class="col-auto">
+                <form method="post" action="{% url 'approve_change_request' cr.pk %}" class="d-inline"
+                      onsubmit="this.querySelector('[name=response]').value = document.getElementById('response').value">
+                    {% csrf_token %}
+                    <input type="hidden" name="response" value="">
+                    <button type="submit" class="btn btn-success">Approve</button>
+                </form>
+            </div>
+            <div class="col-auto">
+                <form method="post" action="{% url 'schedule_change_request' cr.pk %}" class="d-inline"
+                      onsubmit="this.querySelector('[name=response]').value = document.getElementById('response').value">
+                    {% csrf_token %}
+                    <input type="hidden" name="response" value="">
+                    <button type="submit" class="btn btn-info">Schedule for Later</button>
+                </form>
+            </div>
+            <div class="col-auto">
+                <form method="post" action="{% url 'decline_change_request' cr.pk %}" class="d-inline"
+                      onsubmit="this.querySelector('[name=response]').value = document.getElementById('response').value">
+                    {% csrf_token %}
+                    <input type="hidden" name="response" value="">
+                    <button type="submit" class="btn btn-outline-danger">Decline</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

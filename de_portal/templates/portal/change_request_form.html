@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}New Change Request - DE Portal{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'change_requests' %}">Change Requests</a></li>
+        <li class="breadcrumb-item active">New Request</li>
+    </ol>
+</nav>
+
+<h2 class="mb-4">Request a Change</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="title" class="form-label">What do you need changed?</label>
+                <input type="text" class="form-control" id="title" name="title" required
+                       placeholder="e.g., Update contact information, Add new service">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Please describe the change in detail</label>
+                <textarea class="form-control" id="description" name="description" rows="5" required
+                          placeholder="Provide as much detail as possible about what you need..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+            <a href="{% url 'change_requests' %}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
