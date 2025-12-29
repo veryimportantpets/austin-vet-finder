@@ -239,15 +239,17 @@ export default async function HomePage() {
     <main className="flex-1 bg-gradient-to-b from-sage-50 to-white min-h-screen">
       {/* Header */}
       <header className="border-b border-sage-100 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <h1 className="font-display text-xl md:text-2xl font-semibold text-sage-900">
-            Austin Vet Affordability Finder
-          </h1>
-          <p className="text-sm text-sage-600 max-w-2xl">
-            We crawl vet clinic websites across Austin to find pricing, payment plans, and financing options so you can make informed decisions about your pet&apos;s care.
-          </p>
-          <p className="text-xs text-sage-500 mt-1">
-            Last updated {formatDate(lastUpdate)}
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+            <h1 className="font-display text-xl md:text-2xl font-semibold text-sage-900">
+              Austin Vet Affordability Finder
+            </h1>
+            <p className="text-xs text-sage-500">
+              Updated {formatDate(lastUpdate)}
+            </p>
+          </div>
+          <p className="text-sm text-sage-600 mt-1">
+            We crawl clinic websites and financing provider directories to find pricing and payment options for Austin pet owners.
           </p>
         </div>
       </header>
