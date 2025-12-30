@@ -60,8 +60,11 @@ const DEFERRED_INTEREST_PATTERNS = [
 ];
 
 // Transparency detection patterns - enhanced
+// Note: PRICE_LIST pattern should require context suggesting actual pet care pricing
 const TRANSPARENCY_PATTERNS = {
-  PRICE_LIST: /(price|fee|cost|rate)\s*(list|sheet|schedule|table|guide|menu)|our\s+(prices|rates|fees)/i,
+  // Require dollar sign nearby OR specific pet care context to avoid false positives
+  // like "fee schedule" in job postings or "filing fees" on .gov sites
+  PRICE_LIST: /(?:(?:our|view|see)\s+)?(?:price|fee|cost|rate)\s*(?:list|sheet|schedule|table|guide|menu).{0,50}\$\d|(?:exam|vaccine|spay|neuter|dental|surgery|service).{0,30}(?:price|fee|cost)\s*(?:list|sheet|schedule)/i,
   EXAM_FEE: /(exam(ination)?|office\s+visit|new\s+(patient|client)|wellness\s+exam)\s*(fee|cost|price)?\s*[:\-–]?\s*\$\s*\d+/i,
   VACCINE_PRICE: /(vaccine|vaccination|rabies|distemper|bordetella)\s*[:\-–]?\s*\$\s*\d+/i,
   SPAY_NEUTER_PRICE: /(spay|neuter|alter)\s*(fee|cost|price)?\s*[:\-–]?\s*(from\s*)?\$\s*\d+/i,
@@ -530,7 +533,10 @@ async function performCrawl(startUrl: string): Promise<CrawlResult> {
             // Skip obviously irrelevant pages
             if (linkPath.includes('/blog/') || linkPath.includes('/events/') ||
                 linkPath.includes('/news/') || linkPath.includes('/author/') ||
-                linkPath.includes('/tag/') || linkPath.includes('/category/')) {
+                linkPath.includes('/tag/') || linkPath.includes('/category/') ||
+                linkPath.includes('/career') || linkPath.includes('/job') ||
+                linkPath.includes('/hiring') || linkPath.includes('/join-') ||
+                linkPath.includes('/employment') || linkPath.includes('/work-with-us')) {
               return;
             }
 
