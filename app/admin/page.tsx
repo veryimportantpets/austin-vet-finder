@@ -13,6 +13,9 @@ import {
   Eye,
   Search,
   Loader2,
+  Bot,
+  Users,
+  TrendingUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +27,20 @@ interface Stats {
   crawledClinics: number;
   totalPages: number;
   recentCrawls: any[];
+}
+
+interface Analytics {
+  summary: {
+    totalViews: number;
+    humanViews: number;
+    botViews: number;
+    botPercentage: number;
+    uniqueVisitors: number;
+  };
+  botBreakdown: { type: string; count: number }[];
+  clinicViewMap: Record<string, number>;
+  viewsByDay: Record<string, number>;
+  topReferers: { referer: string; count: number }[];
 }
 
 interface Clinic {
@@ -41,6 +58,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [stats, setStats] = useState<Stats | null>(null);
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [loading, setLoading] = useState(false);
   const [crawling, setCrawling] = useState<string | null>(null);
@@ -61,13 +79,15 @@ export default function AdminPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [statsRes, clinicsRes] = await Promise.all([
+      const [statsRes, clinicsRes, analyticsRes] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/clinics'),
+        fetch('/api/admin/analytics'),
       ]);
-      
+
       if (statsRes.ok) setStats(await statsRes.json());
       if (clinicsRes.ok) setClinics((await clinicsRes.json()).clinics);
+      if (analyticsRes.ok) setAnalytics(await analyticsRes.json());
     } catch (err) {
       console.error('Failed to fetch admin data:', err);
     } finally {
@@ -155,55 +175,80 @@ export default function AdminPage() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-emerald-100 rounded-lg">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                  <Users className="w-5 h-5 text-emerald-600" />
                 </div>
                 <div>
                   <p className="text-2xl font-semibold text-sage-900">
-                    {stats?.crawledClinics || 0}
+                    {analytics?.summary.humanViews ?? clinics.reduce((sum, c) => sum + c.viewCount, 0)}
                   </p>
-                  <p className="text-sm text-sage-500">Crawled</p>
+                  <p className="text-sm text-sage-500">Real views</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <Bot className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-semibold text-sage-900">
+                    {analytics?.summary.botViews ?? 0}
+                  </p>
+                  <p className="text-sm text-sage-500">Bot views ({analytics?.summary.botPercentage ?? 0}%)</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-sky-100 rounded-lg">
-                  <Globe className="w-5 h-5 text-sky-600" />
+                  <TrendingUp className="w-5 h-5 text-sky-600" />
                 </div>
                 <div>
                   <p className="text-2xl font-semibold text-sage-900">
-                    {stats?.totalPages || 0}
+                    {analytics?.summary.uniqueVisitors ?? 0}
                   </p>
-                  <p className="text-sm text-sage-500">Pages indexed</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-warmth-100 rounded-lg">
-                  <Eye className="w-5 h-5 text-warmth-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-semibold text-sage-900">
-                    {clinics.reduce((sum, c) => sum + c.viewCount, 0)}
-                  </p>
-                  <p className="text-sm text-sage-500">Total views</p>
+                  <p className="text-sm text-sage-500">Unique visitors (30d)</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Bot Traffic Breakdown */}
+        {analytics && analytics.botBreakdown.length > 0 && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Bot className="w-5 h-5" />
+                Bot Traffic Breakdown
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {analytics.botBreakdown.slice(0, 10).map((bot) => (
+                  <div key={bot.type} className="bg-sage-50 rounded-lg p-3">
+                    <p className="text-sm font-medium text-sage-700 truncate">{bot.type}</p>
+                    <p className="text-lg font-semibold text-sage-900">{bot.count}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-sage-500 mt-3">
+                These views are excluded from your "Real views" count.
+              </p>
+            </CardContent>
+          </Card>
+        )}
         
         {/* Bulk Actions */}
         <Card className="mb-8">
@@ -262,7 +307,7 @@ export default function AdminPage() {
                     <th className="text-left py-3 px-4 text-sm font-medium text-sage-500">Tier</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-sage-500">Transparency</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-sage-500">Last Verified</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-sage-500">Views</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-sage-500">Real Views</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-sage-500">Actions</th>
                   </tr>
                 </thead>
@@ -311,7 +356,9 @@ export default function AdminPage() {
                         )}
                       </td>
                       <td className="py-3 px-4">
-                        <span className="text-sm text-sage-500">{clinic.viewCount}</span>
+                        <span className="text-sm text-sage-500">
+                          {analytics?.clinicViewMap[clinic.id] ?? clinic.viewCount}
+                        </span>
                       </td>
                       <td className="py-3 px-4">
                         <Button

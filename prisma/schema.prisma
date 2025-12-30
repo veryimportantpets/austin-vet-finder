@@ -45,7 +45,8 @@ model Clinic {
   communityReports          CommunityReport[]
   extractedPrices           ExtractedPrice[]
   financingProviderMatches  FinancingProviderMatch[]
-  viewCount                 Int               @default(0) @map("view_count")
+  pageViews                 PageView[]
+  viewCount                 Int               @default(0) @map("view_count") // Legacy - use PageView for accurate counts
 
   @@index([city, state])
   @@index([affordabilityScore])
@@ -201,6 +202,32 @@ model CommunityReport {
 
   @@index([clinicId])
   @@map("community_reports")
+}
+
+// Individual page views for analytics
+model PageView {
+  id        String   @id @default(cuid())
+  clinicId  String   @map("clinic_id")
+  viewedAt  DateTime @default(now()) @map("viewed_at")
+
+  // Visitor fingerprint (privacy-preserving)
+  ipHash    String?  @map("ip_hash")      // SHA256 hash of IP + daily salt
+  userAgent String?  @map("user_agent")   // Full user-agent string
+
+  // Bot detection
+  isBot     Boolean  @default(false) @map("is_bot")
+  botType   String?  @map("bot_type")     // googlebot, bingbot, crawler, etc.
+
+  // Request metadata
+  referer   String?                       // Where they came from
+  path      String?                       // The full path visited
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([viewedAt])
+  @@index([isBot])
+  @@map("page_views")
 }
 
 // Financing provider directory matches

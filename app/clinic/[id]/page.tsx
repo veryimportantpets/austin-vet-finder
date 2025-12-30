@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 import Link from 'next/link';
 import {
   ChevronLeft,
@@ -38,6 +39,7 @@ import {
   FINANCING_PROVIDERS,
 } from '@/lib/utils';
 import { CopyButton } from './copy-button';
+import { detectBot, hashIP, getClientIP } from '@/lib/analytics';
 
 interface Props {
   params: { id: string };
@@ -76,11 +78,33 @@ export default async function ClinicDetailPage({ params }: Props) {
     notFound();
   }
   
-  // Increment view count
-  await prisma.clinic.update({
+  // Record detailed page view for analytics
+  const headersList = headers();
+  const userAgent = headersList.get('user-agent') || '';
+  const referer = headersList.get('referer') || null;
+  const clientIP = getClientIP(headersList);
+  const botDetection = detectBot(userAgent);
+
+  // Create detailed page view record (non-blocking)
+  prisma.pageView.create({
+    data: {
+      clinicId: params.id,
+      ipHash: hashIP(clientIP),
+      userAgent: userAgent.substring(0, 500),
+      isBot: botDetection.isBot,
+      botType: botDetection.botType,
+      referer: referer?.substring(0, 500) || null,
+      path: `/clinic/${params.id}`,
+    },
+  }).catch(err => {
+    console.error('Failed to record page view:', err);
+  });
+
+  // Also increment legacy viewCount for backwards compatibility
+  prisma.clinic.update({
     where: { id: params.id },
     data: { viewCount: { increment: 1 } },
-  });
+  }).catch(() => {});
   
   const tierInfo = getTierInfo(clinic.financingTier);
   const transparencyInfo = getTransparencyInfo(clinic.transparencyScore);
@@ -165,9 +189,12 @@ export default async function ClinicDetailPage({ params }: Props) {
                       <div className="flex items-center gap-2">
                         <Star className="w-4 h-4 flex-shrink-0 text-yellow-500 fill-yellow-500" />
                         <a
-                          href={clinic.placeId
-                            ? `https://www.google.com/maps/place/?q=place_id:${clinic.placeId}`
-                            : `https://www.google.com/maps/search/${encodeURIComponent(clinic.name + ' ' + clinic.city + ' TX')}`}
+                          href={(() => {
+                            const query = encodeURIComponent(clinic.name + ' ' + clinic.city + ' TX');
+                            return clinic.placeId
+                              ? `https://www.google.com/maps/search/?api=1&query=${query}&query_place_id=${clinic.placeId}`
+                              : `https://www.google.com/maps/search/?api=1&query=${query}`;
+                          })()}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:text-sage-800 flex items-center gap-1"
@@ -349,7 +376,10 @@ export default async function ClinicDetailPage({ params }: Props) {
                         {clinic.extractedPrices.map((price) => {
                           const serviceName =
                             price.serviceType === 'exam' ? 'Exam Fee' :
-                            price.serviceType === 'vaccines' ? 'Vaccines' :
+                            price.serviceType === 'rabies' ? 'Rabies Vaccine' :
+                            price.serviceType === 'dhpp' ? 'DHPP Vaccine' :
+                            price.serviceType === 'bordetella' ? 'Bordetella Vaccine' :
+                            price.serviceType === 'vaccines' ? 'Vaccines (package)' :
                             price.serviceType === 'spay_neuter' ? 'Spay/Neuter' :
                             price.serviceType === 'dental' ? 'Dental Cleaning' :
                             price.serviceType === 'microchip' ? 'Microchip' :

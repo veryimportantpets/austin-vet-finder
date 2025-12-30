@@ -90,13 +90,43 @@ const PRICE_EXTRACTION_PATTERNS: {
       /(?:exam|office\s+visit|wellness\s+visit).{0,100}(?:cost|price|fee)[?\s:]*\$\s*(\d+(?:\.\d{2})?)/gi,
     ],
   },
-  // Vaccines
+  // Rabies vaccine (individual)
+  {
+    serviceType: 'rabies',
+    serviceName: 'Rabies vaccine',
+    patterns: [
+      /rabies\s*(?:vaccine|vaccination|shot)?[:\s]*\$\s*(\d+(?:\.\d{2})?)/gi,
+      /\$\s*(\d+(?:\.\d{2})?)\s*rabies/gi,
+      /rabies.{0,50}(?:cost|price|fee)[?\s:]*\$\s*(\d+(?:\.\d{2})?)/gi,
+    ],
+  },
+  // DHPP/Distemper combo vaccine (individual)
+  {
+    serviceType: 'dhpp',
+    serviceName: 'DHPP vaccine',
+    patterns: [
+      /(?:dhpp|dhlpp|da2pp|dapp)\s*(?:vaccine|vaccination|shot)?[:\s]*\$\s*(\d+(?:\.\d{2})?)/gi,
+      /distemper\s*(?:combo|vaccine|vaccination|shot)?[:\s]*\$\s*(\d+(?:\.\d{2})?)/gi,
+      /\$\s*(\d+(?:\.\d{2})?)\s*(?:dhpp|dhlpp|distemper)/gi,
+      /(?:dhpp|distemper).{0,50}(?:cost|price|fee)[?\s:]*\$\s*(\d+(?:\.\d{2})?)/gi,
+    ],
+  },
+  // Bordetella vaccine (individual)
+  {
+    serviceType: 'bordetella',
+    serviceName: 'Bordetella vaccine',
+    patterns: [
+      /bordetella\s*(?:vaccine|vaccination|shot)?[:\s]*\$\s*(\d+(?:\.\d{2})?)/gi,
+      /kennel\s+cough\s*(?:vaccine|shot)?[:\s]*\$\s*(\d+(?:\.\d{2})?)/gi,
+      /\$\s*(\d+(?:\.\d{2})?)\s*bordetella/gi,
+    ],
+  },
+  // Generic vaccines (package/bundle pricing - lower priority)
   {
     serviceType: 'vaccines',
     serviceName: 'Vaccines',
     patterns: [
-      /(?:rabies|dhpp|dhlpp|distemper|parvo|bordetella|lepto|fvrcp|felv)\s*(?:vaccine|vaccination|shot)?[:\s]*\$\s*(\d+(?:\.\d{2})?)/gi,
-      /vaccine[s]?\s*(?:from|starting\s+at)?[:\s]*\$\s*(\d+(?:\.\d{2})?)/gi,
+      /vaccine[s]?\s*(?:package|bundle)?[:\s]*(?:from|starting\s+at)?[:\s]*\$\s*(\d+(?:\.\d{2})?)/gi,
       /\$\s*(\d+(?:\.\d{2})?)\s*(?:per\s+)?(?:vaccine|vaccination)/gi,
       /(?:vaccine|vaccination).{0,100}(?:cost|price|fee)[?\s:]*\$\s*(\d+(?:\.\d{2})?)/gi,
     ],

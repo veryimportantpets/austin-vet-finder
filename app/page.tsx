@@ -66,6 +66,48 @@ const VERIFIED_LOW_COST = [
   'affordable pet care',          // Known legitimate low-cost clinic
 ];
 
+// Patterns that indicate a vaccine-only clinic (not full-service vet care)
+const VACCINE_CLINIC_PATTERNS = [
+  'vaccine clinic',
+  'vaccination clinic',
+  'vaccine event',
+  'shot clinic',
+  'low cost shots',
+  'vaccine services',
+  'mobile vaccines',
+  'vaccine station',
+  'rabies clinic',
+  'vetco vaccination',    // Vetco vaccination clinics (not Vetco Total Care)
+  'vip petcare',          // VIP Petcare vaccination clinics
+  'pet vaccines',         // e.g., "Prickly Pear Pet Vaccines"
+];
+
+// Service types that indicate full-service vet care (not just vaccines)
+const FULL_SERVICE_TYPES = ['exam', 'spay_neuter', 'dental', 'bloodwork', 'xray', 'emergency'];
+
+// Check if clinic is a vaccine-only clinic (not full-service vet care)
+function isVaccineOnlyClinic(clinic: ClinicWithData): boolean {
+  const nameLower = clinic.name.toLowerCase();
+
+  // Check name patterns
+  if (VACCINE_CLINIC_PATTERNS.some(pattern => nameLower.includes(pattern))) {
+    return true;
+  }
+
+  // If clinic has extracted prices, check if they ONLY have vaccine-related services
+  if (clinic.extractedPrices.length > 0) {
+    const hasFullServicePricing = clinic.extractedPrices.some(
+      p => FULL_SERVICE_TYPES.includes(p.serviceType)
+    );
+    // If they only have vaccines/microchip/heartworm/fecal (no exam, surgery, dental, etc.)
+    if (!hasFullServicePricing) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // Check if clinic is a verified nonprofit or low-cost provider
 // STRICT: Only include verified organizations or those with confirmed low pricing
 function isLowCostNonprofit(clinic: ClinicWithData): boolean {
@@ -133,6 +175,11 @@ function categorizeClinics(clinics: ClinicWithData[]): CategorizedClinics {
   const nothingFound: ClinicWithData[] = [];
 
   for (const clinic of clinics) {
+    // Skip vaccine-only clinics - they're not full-service vet care
+    if (isVaccineOnlyClinic(clinic)) {
+      continue;
+    }
+
     // Priority 1: Low-cost/nonprofit always goes to that category
     if (isLowCostNonprofit(clinic)) {
       lowCostNonprofit.push(clinic);

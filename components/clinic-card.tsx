@@ -116,19 +116,34 @@ function getKeyPrices(clinic: ClinicCardProps['clinic']): { service: string; pri
   const prices: { service: string; price: string }[] = [];
   const extractedPrices = clinic.extractedPrices || [];
 
-  // Priority order: exam, vaccines, spay_neuter
-  const priorityServices = ['exam', 'vaccines', 'spay_neuter', 'dental', 'wellness_plan'];
+  // Service name mapping
+  const serviceNames: Record<string, string> = {
+    exam: 'Exam',
+    rabies: 'Rabies',
+    dhpp: 'DHPP',
+    bordetella: 'Bordetella',
+    vaccines: 'Vaccines',
+    spay_neuter: 'Spay/Neuter',
+    dental: 'Dental',
+    wellness_plan: 'Wellness/mo',
+  };
+
+  // Priority order: exam first, then individual vaccines (more useful than package), then other services
+  // Individual vaccines are more useful for comparison than generic "vaccines" package price
+  const priorityServices = ['exam', 'rabies', 'dhpp', 'bordetella', 'vaccines', 'spay_neuter', 'dental', 'wellness_plan'];
 
   for (const serviceType of priorityServices) {
     const price = extractedPrices.find(p => p.serviceType === serviceType);
     if (price) {
-      const serviceName = serviceType === 'exam' ? 'Exam' :
-                         serviceType === 'vaccines' ? 'Vaccines' :
-                         serviceType === 'spay_neuter' ? 'Spay/Neuter' :
-                         serviceType === 'dental' ? 'Dental' :
-                         serviceType === 'wellness_plan' ? 'Wellness/mo' :
-                         price.serviceName || serviceType;
+      // Skip generic "vaccines" if we already have individual vaccine prices
+      if (serviceType === 'vaccines') {
+        const hasIndividualVaccines = prices.some(p =>
+          ['Rabies', 'DHPP', 'Bordetella'].includes(p.service)
+        );
+        if (hasIndividualVaccines) continue;
+      }
 
+      const serviceName = serviceNames[serviceType] || price.serviceName || serviceType;
       const priceStr = price.maxPrice
         ? `${formatPrice(price.minPrice)}-${formatPrice(price.maxPrice)}`
         : formatPrice(price.minPrice);
@@ -208,11 +223,13 @@ function getBadgeVariant(badge: FinancingBadge): 'nonprofit' | 'lowcost' | 'tier
 
 // Generate Google Maps URL for reviews
 function getGoogleMapsUrl(placeId: string | null | undefined, clinicName: string, city: string): string {
+  const query = encodeURIComponent(clinicName + ' ' + city + ' TX');
   if (placeId) {
-    return `https://www.google.com/maps/place/?q=place_id:${placeId}`;
+    // Use Maps URLs API format - works reliably on both mobile and desktop
+    return `https://www.google.com/maps/search/?api=1&query=${query}&query_place_id=${placeId}`;
   }
   // Fallback to search
-  return `https://www.google.com/maps/search/${encodeURIComponent(clinicName + ' ' + city + ' TX')}`;
+  return `https://www.google.com/maps/search/?api=1&query=${query}`;
 }
 
 export function ClinicCard({ clinic, badge }: ClinicCardProps) {
