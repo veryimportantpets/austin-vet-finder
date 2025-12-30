@@ -163,25 +163,22 @@ function getWhatWeFound(clinic: ClinicCardProps['clinic']): { found: boolean; te
   const extractedPrices = clinic.extractedPrices || [];
   const evidenceLabels = clinic.evidence.map(e => e.label.toLowerCase());
 
-  // Check for extracted prices first (more reliable)
+  // Only show exam price if we have extracted it (reliable, matches detail page)
   const examPrice = extractedPrices.find(p => p.serviceType === 'exam');
   if (examPrice) {
     items.push({ found: true, text: `Exam fee: ${formatPrice(examPrice.minPrice)}` });
-  } else {
-    const examEvidence = clinic.evidence.find(e =>
-      e.label.toLowerCase().includes('exam') && e.snippet.includes('$')
-    );
-    if (examEvidence) {
-      const priceMatch = examEvidence.snippet.match(/\$\d+/);
-      if (priceMatch) {
-        items.push({ found: true, text: `Posts exam fee: ${priceMatch[0]}` });
-      }
-    }
   }
 
-  // Vaccine pricing
+  // Vaccine pricing - prefer individual vaccines over package price
+  const rabiesPrice = extractedPrices.find(p => p.serviceType === 'rabies');
+  const dhppPrice = extractedPrices.find(p => p.serviceType === 'dhpp');
   const vaccinePrice = extractedPrices.find(p => p.serviceType === 'vaccines');
-  if (vaccinePrice) {
+
+  if (rabiesPrice) {
+    items.push({ found: true, text: `Rabies: ${formatPrice(rabiesPrice.minPrice)}` });
+  } else if (dhppPrice) {
+    items.push({ found: true, text: `DHPP: ${formatPrice(dhppPrice.minPrice)}` });
+  } else if (vaccinePrice) {
     items.push({ found: true, text: `Vaccines from ${formatPrice(vaccinePrice.minPrice)}` });
   }
 
@@ -191,17 +188,16 @@ function getWhatWeFound(clinic: ClinicCardProps['clinic']): { found: boolean; te
     items.push({ found: true, text: `Spay/neuter from ${formatPrice(spayPrice.minPrice)}` });
   }
 
-  // Price list
-  if (evidenceLabels.some(l => l.includes('price list') || l.includes('pricing'))) {
+  // Price list - only show if we actually have extracted prices to back it up
+  // This prevents showing "Publishes price list" when detail page shows "No prices"
+  if (extractedPrices.length > 0 && evidenceLabels.some(l => l.includes('price list') || l.includes('pricing'))) {
     items.push({ found: true, text: 'Publishes price list' });
   }
 
-  // Wellness plan pricing
+  // Wellness plan pricing - only show evidence-based claim if we have concrete data
   const wellnessPrice = extractedPrices.find(p => p.serviceType === 'wellness_plan');
   if (wellnessPrice) {
     items.push({ found: true, text: `Wellness plan ${formatPrice(wellnessPrice.minPrice)}/mo` });
-  } else if (evidenceLabels.some(l => l.includes('wellness'))) {
-    items.push({ found: true, text: 'Wellness plan available' });
   }
 
   // If no items found
