@@ -1,0 +1,29 @@
+{
+  "name": "@de-connect/service",
+  "version": "1.0.0",
+  "description": "Background sync service for DE Connect",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "de-service": "./dist/main.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/main.ts",
+    "start": "node dist/main.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "dependencies": {
+    "@de-connect/contracts": "^1.0.0",
+    "@de-connect/shared": "^1.0.0",
+    "@de-connect/runner": "^1.0.0",
+    "croner": "^8.0.0",
+    "conf": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0",
+    "tsx": "^4.7.0"
+  }
+}

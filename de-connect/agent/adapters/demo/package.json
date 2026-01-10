@@ -1,0 +1,41 @@
+{
+  "name": "@de-connect/adapter-demo",
+  "version": "1.0.0",
+  "description": "Demo adapter for testing DE Connect",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@de-connect/contracts": "^1.0.0",
+    "@de-connect/shared": "^1.0.0",
+    "@de-connect/runner": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  },
+  "de-connect": {
+    "manifest": {
+      "adapterId": "demo-adapter",
+      "name": "Demo Adapter",
+      "version": "1.0.0",
+      "supportedKinds": ["demo"],
+      "requiresX86": false,
+      "capabilities": {
+        "incrementalSync": false,
+        "autoDetect": true,
+        "realtime": false,
+        "dateRangeExport": false,
+        "entities": ["client", "patient", "appointment", "reminder", "invoice"],
+        "acquisitionModes": ["direct"]
+      },
+      "minAgentVersion": "1.0.0",
+      "description": "Demo adapter for testing. Generates sample veterinary data.",
+      "author": "DE Connect"
+    }
+  }
+}

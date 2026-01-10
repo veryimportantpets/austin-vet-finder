@@ -1,0 +1,8 @@
+patient_id,client_id,name,species,breed,sex,dob
+P001,C001,Max,canine,Labrador Retriever,male_neutered,2019-03-15
+P002,C001,Bella,feline,Persian,female_spayed,2020-07-22
+P003,C002,Charlie,canine,German Shepherd,male,2018-11-08
+P004,C003,Luna,feline,Siamese,female_spayed,2021-01-30
+P005,C004,Cooper,canine,Golden Retriever,male_neutered,2017-06-12
+P006,C004,Daisy,canine,Beagle,female,2019-09-25
+P007,C005,Rocky,canine,Bulldog,male,2020-04-18

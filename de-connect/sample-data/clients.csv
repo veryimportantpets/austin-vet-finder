@@ -1,0 +1,6 @@
+client_id,first_name,last_name,email,phone,address,city,state,zip
+C001,John,Smith,john.smith@example.com,555-0101,123 Main St,Austin,TX,78701
+C002,Jane,Johnson,jane.johnson@example.com,555-0102,456 Oak Ave,Austin,TX,78702
+C003,Mike,Williams,mike.williams@example.com,555-0103,789 Elm Blvd,Austin,TX,78703
+C004,Sarah,Brown,sarah.brown@example.com,555-0104,321 Pine Dr,Austin,TX,78704
+C005,David,Jones,david.jones@example.com,555-0105,654 Cedar Ln,Austin,TX,78705

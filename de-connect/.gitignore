@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.next/
+out/
+
+# Data directories
+data/
+*.db
+*.db-journal
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+secrets/
+*.enc
+
+# Temp
+temp/
+tmp/
+.temp/
+
+# Browser profiles (for export automation)
+.browser-profile/
+
+# Uploads
+uploads/
+
+# Package archives
+*.zip
+!sample-data/*.zip

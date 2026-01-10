@@ -1,0 +1,42 @@
+{
+  "name": "@de-connect/adapter-export-drop",
+  "version": "1.0.0",
+  "description": "Export Drop adapter - universal manual file drop fallback",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@de-connect/contracts": "^1.0.0",
+    "@de-connect/shared": "^1.0.0",
+    "@de-connect/runner": "^1.0.0",
+    "csv-parse": "^5.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  },
+  "de-connect": {
+    "manifest": {
+      "adapterId": "export-drop-adapter",
+      "name": "Export Drop",
+      "version": "1.0.0",
+      "supportedKinds": ["export_drop"],
+      "requiresX86": false,
+      "capabilities": {
+        "incrementalSync": true,
+        "autoDetect": false,
+        "realtime": false,
+        "dateRangeExport": false,
+        "entities": ["client", "patient", "appointment", "reminder", "invoice"],
+        "acquisitionModes": ["export_drop"]
+      },
+      "minAgentVersion": "1.0.0",
+      "description": "Universal fallback adapter. Watches a folder for manually exported CSV files.",
+      "author": "DE Connect"
+    }
+  }
+}

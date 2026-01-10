@@ -1,0 +1,43 @@
+{
+  "name": "@de-connect/adapter-pulse",
+  "version": "1.0.0",
+  "description": "Pulse (Covetrus) adapter - Export Automation mode",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@de-connect/contracts": "^1.0.0",
+    "@de-connect/shared": "^1.0.0",
+    "@de-connect/runner": "^1.0.0",
+    "playwright": "^1.40.0",
+    "csv-parse": "^5.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  },
+  "de-connect": {
+    "manifest": {
+      "adapterId": "pulse-adapter",
+      "name": "Pulse (Covetrus)",
+      "version": "1.0.0",
+      "supportedKinds": ["pulse"],
+      "requiresX86": false,
+      "capabilities": {
+        "incrementalSync": true,
+        "autoDetect": false,
+        "realtime": false,
+        "dateRangeExport": true,
+        "entities": ["client", "patient", "appointment", "reminder", "invoice"],
+        "acquisitionModes": ["export_automation", "export_drop"]
+      },
+      "minAgentVersion": "1.0.0",
+      "description": "Pulse (Covetrus) cloud PIMS adapter using export automation.",
+      "author": "DE Connect"
+    }
+  }
+}

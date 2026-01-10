@@ -1,0 +1,41 @@
+{
+  "name": "@de-connect/adapter-avimark",
+  "version": "1.0.0",
+  "description": "AVImark adapter - Direct database access via CarsonDB",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@de-connect/contracts": "^1.0.0",
+    "@de-connect/shared": "^1.0.0",
+    "@de-connect/runner": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  },
+  "de-connect": {
+    "manifest": {
+      "adapterId": "avimark-adapter",
+      "name": "AVImark",
+      "version": "1.0.0",
+      "supportedKinds": ["avimark"],
+      "requiresX86": true,
+      "capabilities": {
+        "incrementalSync": true,
+        "autoDetect": true,
+        "realtime": false,
+        "dateRangeExport": true,
+        "entities": ["client", "patient", "appointment", "reminder", "invoice"],
+        "acquisitionModes": ["direct", "export_drop"]
+      },
+      "minAgentVersion": "1.0.0",
+      "description": "AVImark on-premise PIMS adapter. Uses CarsonDB for database access.",
+      "author": "DE Connect"
+    }
+  }
+}
