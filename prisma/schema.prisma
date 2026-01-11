@@ -254,3 +254,106 @@ model FinancingProviderMatch {
   @@index([provider])
   @@map("financing_provider_matches")
 }
+
+// ============================================
+// Content Saver App Models
+// ============================================
+
+// Saved web content (articles, tweets, blogs, etc.)
+model SavedContent {
+  id          String   @id @default(cuid())
+  url         String   @unique
+  title       String?
+  siteName    String?  @map("site_name")
+  author      String?
+  publishedAt DateTime? @map("published_at")
+
+  // Extracted content
+  textContent String   @map("text_content") @db.Text
+  excerpt     String?  @db.Text
+  imageUrl    String?  @map("image_url")
+
+  // Content type detection
+  contentType String   @default("article") @map("content_type") // article, tweet, video, podcast, blog
+
+  // User organization
+  tags        String[] @default([])
+  isArchived  Boolean  @default(false) @map("is_archived")
+  isFavorite  Boolean  @default(false) @map("is_favorite")
+  readingTime Int?     @map("reading_time") // estimated minutes
+
+  // Timestamps
+  savedAt     DateTime @default(now()) @map("saved_at")
+  lastReadAt  DateTime? @map("last_read_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  summaries     ContentSummary[]
+  conversations ContentConversation[]
+
+  @@index([savedAt])
+  @@index([contentType])
+  @@index([isArchived])
+  @@index([isFavorite])
+  @@map("saved_content")
+}
+
+// AI-generated summaries of saved content
+model ContentSummary {
+  id        String   @id @default(cuid())
+  contentId String   @map("content_id")
+
+  // Summary types
+  summaryType String  @map("summary_type") // brief, detailed, bullet_points, eli5
+  summary     String  @db.Text
+
+  // TTS audio (stored as base64 or URL)
+  audioUrl    String? @map("audio_url")
+  audioDuration Int?  @map("audio_duration") // seconds
+
+  // Metadata
+  model       String  @default("claude-sonnet-4-20250514") // Which model generated it
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  content SavedContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, summaryType])
+  @@index([contentId])
+  @@map("content_summaries")
+}
+
+// Conversations about saved content
+model ContentConversation {
+  id        String   @id @default(cuid())
+  contentId String   @map("content_id")
+  title     String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  content  SavedContent  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+
+  @@index([contentId])
+  @@map("content_conversations")
+}
+
+// Individual chat messages in a conversation
+model ChatMessage {
+  id             String   @id @default(cuid())
+  conversationId String   @map("conversation_id")
+
+  role           String   // user, assistant
+  content        String   @db.Text
+
+  // TTS for assistant messages
+  audioUrl       String?  @map("audio_url")
+
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  conversation ContentConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("chat_messages")
+}

@@ -21,6 +21,7 @@
     "migrate:tiers": "tsx scripts/migrate-tiers.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-dialog": "^1.1.2",
