@@ -88,6 +88,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
   const [isPaused, setIsPaused] = useState(false);
   const [speechRate, setSpeechRate] = useState(1.0);
   const [ttsText, setTtsText] = useState<'article' | 'summary'>('article');
+  const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   // Chat state
@@ -108,6 +109,65 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
       }
     };
   }, [id]);
+
+  // Load and select best female voice
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    function selectBestVoice() {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length === 0) return;
+
+      // Preferred female voices in order of preference (natural sounding)
+      const preferredVoices = [
+        'Samantha', // macOS - very natural
+        'Karen', // macOS Australian
+        'Victoria', // macOS
+        'Zoe', // macOS
+        'Google UK English Female',
+        'Google US English',
+        'Microsoft Zira',
+        'Microsoft Eva',
+        'Fiona', // macOS Scottish
+        'Moira', // macOS Irish
+        'Tessa', // macOS South African
+      ];
+
+      // Try to find a preferred voice
+      for (const name of preferredVoices) {
+        const voice = voices.find(v => v.name.includes(name));
+        if (voice) {
+          setSelectedVoice(voice);
+          return;
+        }
+      }
+
+      // Fallback: find any English female voice
+      const femaleVoice = voices.find(v =>
+        v.lang.startsWith('en') &&
+        (v.name.toLowerCase().includes('female') ||
+         v.name.match(/samantha|karen|victoria|zoe|fiona|moira|tessa|zira|eva|susan|kate|ava/i))
+      );
+      if (femaleVoice) {
+        setSelectedVoice(femaleVoice);
+        return;
+      }
+
+      // Last fallback: any English voice
+      const englishVoice = voices.find(v => v.lang.startsWith('en'));
+      if (englishVoice) {
+        setSelectedVoice(englishVoice);
+      }
+    }
+
+    // Voices may load asynchronously
+    selectBestVoice();
+    window.speechSynthesis.onvoiceschanged = selectBestVoice;
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
 
   useEffect(() => {
     if (content?.summaries) {
@@ -207,7 +267,12 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = speechRate;
-    utterance.pitch = 1;
+    utterance.pitch = 1.05; // Slightly higher pitch for warmer tone
+
+    // Use selected female voice
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
 
     utterance.onend = () => {
       setIsSpeaking(false);
